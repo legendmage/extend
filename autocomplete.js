@@ -33,11 +33,6 @@
             }
         }
 
-        //    document.body.onfocus=function(){
-        //          ev.nextElementSibling.className = ev.nextElementSibling.className.replace('open', '');
-        //         ev.nextElementSibling.className += ' close'
-        //     }
-
         document.body.onmousedown = function (e) {
             if (!e) {
                 e = window.event;
@@ -51,13 +46,6 @@
                 ev.nextElementSibling.className += ' close'
             }
         }
-
-        // ev.onblur = function () {
-        //     console.log('open')
-        //     // ev.nextElementSibling.className = ev.nextElementSibling.className.replace('open', '');
-        //     // ev.nextElementSibling.className += ' close'
-
-        // }
 
         function dropDown(ev) {
             ev.parentElement.style.display = 'none';
