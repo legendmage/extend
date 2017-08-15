@@ -7,27 +7,38 @@
     <meta charset="utf-8">
 
     <script type="text/javaScript">
-        window.onload=function(){ 
-            var ev=document.getElementById('demo');
-            window.autocomplete(ev); 
+        window.onload=function(){
+             var ev=document.getElementById('demo'); 
+             var ev1=document.getElementById('demo1'); 
+             window.autocomplete(ev,{
+                 class:'ceshi',
+                 data:[1,2,3,4,5],
+                 autoTitle:'',
+                 autoVal:''
+             }); 
+             window.autocomplete(ev1); 
         }
     </script>
 
     <style>
-        .autocomplete-main .autocomplete-dropdown{
+        .autocomplete-main .autocomplete-dropdown {
             border: 1px solid #f00;
         }
-        .autocomplete-main .autocomplete-dropdown>div{
+
+        .autocomplete-main .autocomplete-dropdown>div {
             width: auto;
             padding-left: 5px;
         }
-        .autocomplete-main .autocomplete-dropdown>div:hover{
+
+        .autocomplete-main .autocomplete-dropdown>div:hover {
             background-color: #e09000;
         }
-        .close{
+
+        .autocomplete-close {
             display: none;
         }
-        .open{
+
+        .autocomplete-open {
             display: block;
         }
     </style>
@@ -36,9 +47,13 @@
 </head>
 
 <body>
-    <div class="autocomplete-main" style="width:auto;display:inline-block">
+    <input type="text" id="demo" value="aaaa" class="autocomplete-input" style="position:relative;" />
+
+     <input type="text" id="demo1" value="1111" class="autocomplete-input" style="position:relative;" />
+
+    <!-- <div class="autocomplete-main" style="width:auto;display:inline-block">
         <input type="text" id="demo" value="aaaa" class="autocomplete-input" style="position:relative;" />
-        <div class="autocomplete-source autocomplete-dropdown close">
+        <div class="autocomplete-source autocomplete-dropdown autocomplete-close">
             <div class="autocomplete-item">1231</div>
             <div class="autocomplete-item">1233</div>
             <div class="autocomplete-item">1234</div>
@@ -48,10 +63,7 @@
             <div class="autocomplete-item">1238</div>
             <div class="autocomplete-item">1239</div>
         </div>
-    </div>
-
-
-    <span id="selectedCode"></span>
+    </div> -->
 
 </body>
 
