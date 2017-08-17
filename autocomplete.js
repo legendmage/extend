@@ -2,6 +2,12 @@
     "use strict"
     var autoVal, dataSource;
 
+    /**
+     * Q1:可定制显示条数
+     * Q2:支持远程数据源
+     * Q3:支持手动输入筛选  
+     */
+
     // GLOBAL
     /**
      * class: 新增类
@@ -11,7 +17,9 @@
         class: '',
         data: [],
         autoTitle: '',
-        autoVal: ''
+        autoVal: '',
+        visibelLimt: 10,
+
     };
 
     var utility = {
@@ -31,13 +39,17 @@
                 return classArray;
             }
         },
-        registerClickEvent: function (sourceElem) {
+        registerClickEvent: function (sourceElem, resultCallback) {
             var items = sourceElem.querySelectorAll('div.autocomplete-item');
             for (var i = 0; i < items.length; i++) {
                 !function (item, index) {
                     item.addEventListener('mousedown', function () {
-                        var val = this.getAttribute('data-autoval');
-                        sourceElem.previousElementSibling.value = val;
+                        var _rval = this.getAttribute('data-autoval');
+                        var _rtitle = this.innerText;
+                        sourceElem.previousElementSibling.value = _rtitle;
+                        if (resultCallback
+                            && (resultCallback instanceof Function))
+                            resultCallback(_rval);
                     })
                 }(items[i], i);
             }
@@ -88,7 +100,7 @@
         var parentElem = ev.parentElement;
         var mainNode = document.createElement('div');
         mainNode.className = 'autocomplete-main';
-        mainNode.style.cssText = 'width:auto;display:inline-block;';
+        mainNode.style.cssText = 'width:auto;display:inline-block;position: relative;';
         parentElem.appendChild(mainNode);
         mainNode.appendChild(ev);
 
@@ -98,10 +110,13 @@
         //Data Handler
         var data = utility.dataHandler(opt.data);
         var title = utility.stringTrim(String(opt.autoTitle)) || '',
-            val = utility.stringTrim(String(opt.autoVal)) || '';
+            val = utility.stringTrim(String(opt.autoVal)) || '',
+            limt = data.length > opt.visibelLimt ? opt.visibelLimt : data.length;
 
-        for (var i = 0; i < data.length; i++) {
-            var _title, _val;
+
+        for (var i = 0; i < limt; i++) {
+            var _title = '',
+                _val = '';
             if (title instanceof Function) {
                 _title = title(data[i]);
             }
@@ -109,7 +124,7 @@
                 _val = val(data[i]);
             }
 
-            if (data[i] instanceof Object && !data[i] instanceof Array) {
+            if (data[i] instanceof Object && !(data[i] instanceof Array)) {
                 if (title) {
                     _title = eval('data[i].' + title);
                 } else {
@@ -124,8 +139,8 @@
                 _val = val ? eval('data[i].' + val) : val;
             }
             if (typeof (data[i]) == 'string'
-                || typeof (data[i] == 'number'
-                    || typeof (data[i] == 'boolean'))) {
+                || typeof (data[i]) == 'number'
+                || typeof (data[i]) == 'boolean') {
                 _title = data[i];
                 _val = data[i];
             }
@@ -150,18 +165,37 @@
     }
 
     //setting turnOn turnOff 
-    var setAutoList = function (ev) {
+    var setAutoList = function (ev, resultCallback) {
         ev.onfocus = function () {
             ev.nextElementSibling.className = ev.nextElementSibling.className.replace('autocomplete-close', '');
             ev.nextElementSibling.className += ' autocomplete-open'
             if (!ev.nextElementSibling.hasClickEvent) {
-                utility.registerClickEvent(ev.nextElementSibling);
+                utility.registerClickEvent(ev.nextElementSibling, resultCallback);
             }
         }
 
         ev.onblur = function () {
             this.nextElementSibling.className = this.nextElementSibling.className.replace('autocomplete-open', '');
             this.nextElementSibling.className += ' autocomplete-close'
+        }
+
+        ev.onkeydown = function (e) {
+            // var keynum
+            // var keychar
+            // var numcheck
+            // if (window.event) // IE
+            // {
+            //     keynum = e.keyCode
+            // }
+            // else if (e.which) // Netscape/Firefox/Opera
+            // {
+            //     keynum = e.which
+            // }
+            
+
+            // keychar = String.fromCharCode(keynum)
+            // numcheck = /\d/
+            // return !numcheck.test(keychar)
         }
     }
 
@@ -177,15 +211,14 @@
     }
 
     //SETTING
-    window.autocomplete = function (ev, opt) {
+    window.autocomplete = function (ev, opt, resultCallback) {
         // clone defaluts
         if (opt instanceof Object) {
             buildDiv(ev, opt);
-            setAutoList(ev);
-        }else{
+            setAutoList(ev, resultCallback);
+        } else {
             console.log('autocomplete: default Not NULL!');
         }
     };
 
-    return autocomplete;
 })(window)
