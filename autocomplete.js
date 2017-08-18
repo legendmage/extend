@@ -44,13 +44,16 @@
             for (var i = 0; i < items.length; i++) {
                 !function (item, index) {
                     item.addEventListener('mousedown', function () {
-                        var _rval = this.getAttribute('data-autoval');
-                        var _rtitle = this.innerText;
-                        sourceElem.previousElementSibling.value = _rtitle;
-                        if (resultCallback
-                            && (resultCallback instanceof Function))
-                            resultCallback(_rval);
+                        utility.setValue(this, sourceElem, resultCallback);
                     })
+                    item.addEventListener('mouseover', function () {
+                        utility.addClass(this, 'active');
+                        utility.setValue(this, sourceElem, resultCallback);
+                    })
+                    item.addEventListener('mouseout', function () {
+                        utility.removeClass(this, 'active');
+                    })
+
                 }(items[i], i);
             }
             sourceElem.hasClickEvent = true;
@@ -93,6 +96,31 @@
                     string.trim() :
                     string.toString().replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
         },
+        hasClass: function (elem, className) {
+            return elem.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
+        },
+        addClass: function (elem, className) {
+            if (!utility.hasClass(elem, className)) {
+                elem.className = elem.className + ' ' + className;
+            }
+        },
+        removeClass: function (elem, className) {
+            if (utility.hasClass(elem, className)) {
+                var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+                elem.className = elem.className.replace(reg, ' ');
+            }
+        },
+        setValue: function (elem, sourceElem, resultCallback) {
+            var _rval = elem.getAttribute('data-autoval');
+            var _rtitle = elem.innerText;
+            sourceElem.previousElementSibling.value = _rtitle;
+            sourceElem.previousElementSibling.focus();
+            
+            if (resultCallback
+                && (resultCallback instanceof Function))
+                resultCallback(_rval);
+            
+        }
     }
 
     //BUILD DIV
@@ -179,20 +207,45 @@
             this.nextElementSibling.className += ' autocomplete-close'
         }
 
-        ev.onkeydown = function (e) {
-            // var keynum
-            // var keychar
-            // var numcheck
-            // if (window.event) // IE
-            // {
-            //     keynum = e.keyCode
-            // }
-            // else if (e.which) // Netscape/Firefox/Opera
-            // {
-            //     keynum = e.which
-            // }
-            
 
+        ev.onkeydown = function (e) {
+            var keynum
+            var keychar
+            var numcheck
+            if (window.event) // IE
+            {
+                keynum = e.keyCode
+            }
+            else if (e.which) // Netscape/Firefox/Opera
+            {
+                keynum = e.which
+            }
+
+            if (keynum == 40) {
+                var activeElem = this.nextElementSibling.getElementsByClassName('active');
+                var nds = this.nextElementSibling.getElementsByClassName('autocomplete-item');
+                if (activeElem.length == 0) {
+                    utility.addClass(nds[0], 'active');
+                    utility.setValue(nds[0],this.nextElementSibling,resultCallback);
+                } else {
+                    for (var i = 0; i < nds.length; i++) {
+                        if (utility.hasClass(nds[i], 'active')) {
+                            utility.removeClass(nds[i], 'active');
+                            if (i == (nds.length - 1)) {
+                                utility.addClass(nds[0], 'active');
+                                utility.setValue(nds[0],this.nextElementSibling,resultCallback);
+                            } else {
+                                utility.addClass(nds[i + 1], 'active');
+                                utility.setValue(nds[i + 1],this.nextElementSibling,resultCallback);
+                            }
+                            break;
+                        }
+                    }
+                }
+                // var _lastActiveElem = this.nextElementSibling.getElementsByClassName('.active');
+                // utility.setValue(_lastActiveElem,this,resultCallback);
+                return true;
+            }
             // keychar = String.fromCharCode(keynum)
             // numcheck = /\d/
             // return !numcheck.test(keychar)
