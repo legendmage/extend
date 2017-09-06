@@ -5,7 +5,7 @@
     /**
      * Q1:可定制显示条数
      * Q2:支持远程数据源
-     * Q3:支持手动输入筛选  
+     * Q3:支持手动输入筛选 自动过滤  
      */
 
     // GLOBAL
@@ -43,52 +43,49 @@
             var items = sourceElem.querySelectorAll('div.autocomplete-item');
             for (var i = 0; i < items.length; i++) {
                 !function (item, index) {
+                    debugger
+                    //window.eventList();
                     item.addEventListener('mousedown', function () {
-                        utility.setValue(this, sourceElem, resultCallback);
-                    })
-                    item.addEventListener('mouseover', function () {
-                        utility.addClass(this, 'active');
-                        utility.setValue(this, sourceElem, resultCallback);
-                    })
-                    item.addEventListener('mouseout', function () {
-                        utility.removeClass(this, 'active');
-                    })
-
+                                    utility.setValue(this, sourceElem, resultCallback);
+                                })
+                    var ls=item.eventList;
+                    // for(var key in item.eventList){
+                    //     if(key!='mousedown'){
+                    //         item.addEventListener('mousedown', function () {
+                    //             utility.setValue(this, sourceElem, resultCallback);
+                    //         })
+                    //     }
+                    //     if(key!='mouseover'){
+                    //         item.addEventListener('mouseover', function () {
+                    //             utility.addClass(this, 'active');
+                    //             utility.setValue(this, sourceElem, resultCallback);
+                    //         })
+                    //     }
+                    //     if(key!='mouseout'){
+                    //         item.addEventListener('mouseout', function () {
+                    //             utility.removeClass(this, 'active');
+                    //         })
+                    //     }
+                    // }
+                    //alert(i);
                 }(items[i], i);
             }
             sourceElem.hasClickEvent = true;
         },
-        dataHandler: function (autoData) {
+        dataHandler: function (opt, autoData, index) {
+            var _rData = [];
             autoData = autoData || [];
+            if (!opt.visibelLimt) {
+                return autoData;
+            }
 
-            // check data
-
-            // if (autoData instanceof Object && autoData instanceof Array) {
-            //     if (autoData.length <= 0)
-            //         return [];
-
-            //     if (autoData[0] instanceof Object) {
-
-            //     }
-
-            //     if (typeof (autoData[0]) == 'number'
-            //         || typeof (autoData[0]) == 'string'
-            //         || typeof (autoData[0]) == 'boolean') {
-
-            //     }
-
-            //     if (autoData.length > 0) {
-            //         if (autoData[0] instanceof Object) {
-
-            //         } else {
-            //             console.log('Depth array is not supported!');
-            //         }
-            //     } else {
-            //         console.log('this is empty array!');
-            //     }
-            // }
-
-            return autoData;
+            var _startIndex = (index - 1) * (opt.visibelLimt),
+                _endIndex = (index * opt.visibelLimt);
+            _endIndex = _endIndex >= autoData.length - 1 ? autoData.length - 1 : _endIndex;
+            for (var i = _startIndex; i < _endIndex; i++) {
+                _rData.push(autoData[i]);
+            }
+            return _rData;
         },
         stringTrim: function (string) {
             return string === null || string === undefined ? '' :
@@ -115,32 +112,43 @@
             var _rtitle = elem.innerText;
             sourceElem.previousElementSibling.value = _rtitle;
             sourceElem.previousElementSibling.focus();
-            
+
             if (resultCallback
                 && (resultCallback instanceof Function))
                 resultCallback(_rval);
-            
+
         }
     }
 
     //BUILD DIV
-    var buildDiv = function (ev, opt) {
-        var parentElem = ev.parentElement;
-        var mainNode = document.createElement('div');
-        mainNode.className = 'autocomplete-main';
-        mainNode.style.cssText = 'width:auto;display:inline-block;position: relative;';
-        parentElem.appendChild(mainNode);
-        mainNode.appendChild(ev);
+    /**
+     * 
+     * @param {elem} ev 当前元素 
+     * @param {*} opt 操作属性
+     * @param {*} index 当前页
+     * @param {*} isFirst 是否第一次加载
+     */
+    var buildDiv = function (ev, opt, index, isFirst) {
+        index = index || 1;
+        if (isFirst) {
+            var parentElem = ev.parentElement;
+            var mainNode = document.createElement('div');
+            mainNode.className = 'autocomplete-main';
+            mainNode.style.cssText = 'width:auto;display:inline-block;position: relative;';
+            parentElem.appendChild(mainNode);
+            mainNode.appendChild(ev);
 
-        var itemsNode = document.createElement('div');
-        itemsNode.className = 'autocomplete-source autocomplete-dropdown autocomplete-close';
+            var itemsNode = document.createElement('div');
+            itemsNode.className = 'autocomplete-source autocomplete-dropdown autocomplete-close';
+            mainNode.appendChild(itemsNode);
+        }
 
         //Data Handler
-        var data = utility.dataHandler(opt.data);
+        var dpElem=ev.nextElementSibling;
+        var data = utility.dataHandler(opt, opt.data, index);
         var title = utility.stringTrim(String(opt.autoTitle)) || '',
             val = utility.stringTrim(String(opt.autoVal)) || '',
-            limt = data.length > opt.visibelLimt ? opt.visibelLimt : data.length;
-
+            limt = data.length == opt.visibelLimt ? opt.visibelLimt : data.length;
 
         for (var i = 0; i < limt; i++) {
             var _title = '',
@@ -177,9 +185,10 @@
             itemNode.className = 'autocomplete-item';
             itemNode.innerText = _title;
             itemNode.setAttribute('data-autoval', _val);
-            itemsNode.appendChild(itemNode);
+            itemNode.setAttribute('data-index', index);
+            dpElem.appendChild(itemNode);
         }
-        mainNode.appendChild(itemsNode);
+        
     }
 
     // DATA SOURCE
@@ -193,7 +202,13 @@
     }
 
     //setting turnOn turnOff 
-    var setAutoList = function (ev, resultCallback) {
+    /**
+     * 
+     * @param {elem} ev 当前元素 
+     * @param {object} opt 操作属性
+     * @param {function} resultCallback 回调函数 return 选中值 
+     */
+    var setAutoList = function (ev, opt, resultCallback) {
         ev.onfocus = function () {
             ev.nextElementSibling.className = ev.nextElementSibling.className.replace('autocomplete-close', '');
             ev.nextElementSibling.className += ' autocomplete-open'
@@ -222,26 +237,48 @@
             }
 
             if (keynum == 40) {
-                var activeElem = this.nextElementSibling.getElementsByClassName('active');
-                var nds = this.nextElementSibling.getElementsByClassName('autocomplete-item');
-                if (activeElem.length == 0) {
-                    utility.addClass(nds[0], 'active');
-                    utility.setValue(nds[0],this.nextElementSibling,resultCallback);
-                } else {
-                    for (var i = 0; i < nds.length; i++) {
-                        if (utility.hasClass(nds[i], 'active')) {
-                            utility.removeClass(nds[i], 'active');
-                            if (i == (nds.length - 1)) {
-                                utility.addClass(nds[0], 'active');
-                                utility.setValue(nds[0],this.nextElementSibling,resultCallback);
-                            } else {
-                                utility.addClass(nds[i + 1], 'active');
-                                utility.setValue(nds[i + 1],this.nextElementSibling,resultCallback);
+                nextP(this, opt, resultCallback);
+                /**
+                 * 临时调整
+                 * @param {*} _self 
+                 * @param {*} opt 
+                 * @param {*} resultCallback 
+                 */
+                function nextP(_self, opt, resultCallback) {
+                    var activeElem = _self.nextElementSibling.getElementsByClassName('active');
+                    var nds = _self.nextElementSibling.getElementsByClassName('autocomplete-item');
+                    if (activeElem.length == 0) {
+                        utility.addClass(nds[0], 'active');
+                        utility.setValue(nds[0], _self.nextElementSibling, resultCallback);
+                    } else {
+                        for (var i = 0; i < nds.length; i++) {
+                            if (utility.hasClass(nds[i], 'active')) {
+                                var _index = parseInt(nds[i].getAttribute('data-index'));
+                                utility.removeClass(nds[i], 'active');
+                                if (i == (nds.length - 1)) {
+                                    var _arr = utility.dataHandler(opt, opt.data, (_index + 1));
+                                    if (_arr.length > 0) {
+                                        //追加元素
+                                        buildDiv(_self, opt, (_index + 1), false);
+                                        //绑定事件
+                                        utility.registerClickEvent(_self.nextElementSibling, resultCallback);
+                                        //递归调用
+                                        nextP(_self, opt, resultCallback);
+                                    } else {
+                                        utility.addClass(nds[0], 'active');
+                                        utility.setValue(nds[0], _self.nextElementSibling, resultCallback);
+                                    }
+                                } else {
+                                    utility.addClass(nds[i + 1], 'active');
+                                    utility.setValue(nds[i + 1], _self.nextElementSibling, resultCallback);
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
+
+
                 // var _lastActiveElem = this.nextElementSibling.getElementsByClassName('.active');
                 // utility.setValue(_lastActiveElem,this,resultCallback);
                 return true;
@@ -267,8 +304,8 @@
     window.autocomplete = function (ev, opt, resultCallback) {
         // clone defaluts
         if (opt instanceof Object) {
-            buildDiv(ev, opt);
-            setAutoList(ev, resultCallback);
+            buildDiv(ev, opt, 1, true);
+            setAutoList(ev, opt, resultCallback);
         } else {
             console.log('autocomplete: default Not NULL!');
         }

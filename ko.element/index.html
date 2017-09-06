@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script type="text/javascript" src="./javascript/lib/knockout.debug.js"></script>
+    <!-- <script type="text/javascript" src="./javascript/lib/knockout.js"></script> -->
+    <script type="text/javascript" src="./javascript/ko.element.js"></script>
+
+</head>
+
+<body>
+    <div style="border:1px solid #f00;padding:15px;">
+        <h3>栏位说明</h3>
+        <blockquote>firstName栏位：正常栏位，有一个绑定
+        </blockquote>
+        <blockquote style="background-color:#000;color: #fff;">加载后源： &lt;input type="text" class="firstName" data-bind="value: firstName,enable:btnEnable" data-elem="value:firstName" / &gt;
+        </blockquote>
+        <p>firstName: <input type="text" class="firstName" data-bind="value: firstName" /></p>
+
+        <blockquote>lastName栏位：正常栏位，有多个绑定
+        </blockquote>
+        <blockquote style="background-color:#000;color: #fff;">加载后源： &lt;input type="text" class="lastName" data-bind="value: lastName" data-elem="value:lastName,enable:btnEnable" / &gt;
+        </blockquote>
+        <p>lastName: <input type="text" class="lastName" data-bind="value: lastName,enable:btnEnable" /></p>
+
+        <blockquote>fullName栏位：正常栏位，计算栏位，有一个绑定
+        </blockquote>
+        <blockquote style="background-color:#000;color: #fff;">加载后源： &lt;span class="fullName" data-bind="text: fullName" data-elem="text:fullName" &gt; &lt;/span&gt;
+        </blockquote>
+        <p>fullName：<span class="fullName" data-bind="text: fullName" style="font-weight:bolder;"> </span></p>
+
+        <blockquote>rank.physical栏位：深度字段绑定，有一个绑定
+        </blockquote>
+        <blockquote style="background-color:#000;color: #fff;">加载后源： &lt;input type="text" class="lastName" data-bind="value: rank.physical" data-elem="value:rank.physical" &gt;
+        </blockquote>
+        <p>rank.physical: <input type="text" class="lastName" data-bind="value: rank.physical" /></p>
+    </div>
+
+    <div style="border:1px solid #f00;padding:15px;">
+        <blockquote style="background-color:#000;color: #fff;">
+            查找对应元素时： 需要栏位的绑定类型(插件目前支持类型："text", "value", "checked", "textInput", "selectedOptions", "click","enable")，以及字段绑定的栏位名称。如：value:fieldName
+        </blockquote>
+        <blockquote style="background-color:#000;color: #fff;">
+            页面栏位在页面加载完成后，会在当前栏位新增<b> "data-elem" </b>属性,多个属性时，以逗号分隔(符号可在初始化配置)，查找时只能根据单个查找
+            
+        </blockquote>
+        查找元素：<input type="text" data-bind="value:fieldName" />
+        <button type="button" data-bind="click:elemFind">根据栏位查找对应元素（elemFind）</button>
+    </div>
+
+
+
+    <!-- 目前支持类型 "text", "value", "checked", "textInput", "selectedOptions", "click", "enable" -->
+</body>
+
+</html>
+
+
+<script type="text/javascript">
+    //初始化
+    // ko.element.init({
+    //     bindSymbol: '.', // 生成标记字段是  绑定符号替换  默认是 ：
+    //     splitSymbol: '|', // 栏位包含多个绑定是 选择分割符号，默认，
+    // })
+
+
+    var ViewModel = {
+        firstName: ko.observable('Hello '),
+        lastName: ko.observable('World!'),
+        btnEnable: ko.observable(false),
+
+        rank: {
+            physical: ko.observable('体育')
+        },
+
+        fullName: ko.pureComputed(function () {
+            return ViewModel.firstName() + " " + ViewModel.lastName();
+        }, ViewModel),
+
+        fieldName: ko.observable("value:rank.physical"),
+        elemFind: function () {
+            var elems = ko.element.find(ViewModel.fieldName());
+            alert(elems.outerHTML);
+        }
+
+    };
+
+
+    ko.applyBindings(ViewModel); // This makes Knockout get to work
+
+</script>
