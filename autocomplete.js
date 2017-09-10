@@ -1,8 +1,8 @@
 (function (factory) {
     "use strict"
     var autoVal, dataSource;
-
-    // GLOBAL
+ 
+    // GLOBAL 
     /**
      * class: 新增类
      * data： 数据源 数组  //后期扩展支持 url，静态文件 . !!不支持深度数组 [ [] ]
