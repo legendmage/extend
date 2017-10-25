@@ -1,0 +1,51 @@
+<!-- xdsoft 在IE11下设置visibleLimit<limit出现滚动条，点击滚动条时， 备选列表隐藏，chrome下行为正常    
+     建议；判断鼠标点击的区域 是否为滚动条区域 -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../libs/autocomplete/autocomplete-xdsoft/jquery.autocomplete.css">
+    <script src="../libs/jquery/jquery-2.2.3.js"></script>
+    <script src="../libs/autocomplete/autocomplete-xdsoft/jquery.autocomplete.js"></script>
+</head>
+
+<body>
+
+    <div id="parent-autocomplete">
+        <input type="text" class="form-control" id="auto1" placeholder="enter state">
+    </div>
+
+    <script>
+        var states = [
+            'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
+            'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
+            'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+            'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+            'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+            'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+            'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+            'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+            'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+        ];
+
+        $('#auto1').autocomplete({
+            visibleLimit: 5,
+            source: [states]
+        });
+
+        // $(".xdsoft_autocomplete_dropdown").scroll(function (event) {
+        //    alert(111)
+        // })
+
+
+
+
+    </script>
+</body>
+
+</html>

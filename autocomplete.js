@@ -1,7 +1,6 @@
 (function (factory) {
     "use strict"
     var autoVal, dataSource;
-<<<<<<< HEAD
 
     /**
      * Q1:可定制显示条数
@@ -10,10 +9,6 @@
      */
 
     // GLOBAL
-=======
- 
-    // GLOBAL 
->>>>>>> f472e92b76525b8c0c2278b948c6823f1798e143
     /**
      * class: 新增类
      * data： 数据源 数组  //后期扩展支持 url，静态文件 . !!不支持深度数组 [ [] ]

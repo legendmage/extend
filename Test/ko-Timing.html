@@ -1,0 +1,50 @@
+<!-- 同时使用两个自定义绑定，执行顺序问题 
+    测试结果：按dom data-bind 顺序，绑定在前执行 ex: data-bind:"bind1:aa,bind2:bb" 先执行bind1.再执行bind2
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../libs/knockout/knockout-3.4.0.js"></script>
+</head>
+
+<body>
+    <input type="text" name="text" id="aa" data-bind="fristBinding:num,secondBinding:num2">
+    <input type="text" name="text" id="aa" data-bind="secondBinding:num,fristBinding:num2">
+    <script>
+        ko.bindingHandlers.fristBinding = {
+            init: function (element, valueAccessor, allBindingAccessor, viewModel) {
+                var value = valueAccessor();
+                element.value=value();
+                console.log("frist  Init=============" + value());
+            },
+            update: function (element, valueAccessor, allBindingAccessor, viewModel) {
+                console.log("frist  Update");
+            }
+        }
+        ko.bindingHandlers.secondBinding = {
+            init: function (element, valueAccessor, allBindingAccessor, viewModel) {
+                var value = valueAccessor();
+                element.value=value();
+                console.log("second  Init=============" + value());
+            },
+            update: function (element, valueAccessor, allBindingAccessor, viewModel) {
+                console.log("second  Update");
+            }
+        }
+
+        let model = {};
+        model.num = ko.observable("123");
+        model.num2 = ko.observable("222");
+
+        ko.applyBindings(model);
+
+    </script>
+</body>
+
+</html>
