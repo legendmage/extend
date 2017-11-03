@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../libs/jquery/jquery-2.2.3.js"></script>
+</head>
+
+<body>
+<input type="text" class="ff" value="1a" readonly=true id="txtId"/>
+<input type="text" class="ff" value="3s" disabled=true/>
+<input type="text" value="1" maxlength="5" />
+<input type="text" value="2"/>
+<input type="text" value="3"/>
+<input type="text" value="4"/>
+<input type="text" value="5s"/>
+<input type="text" value="6"/>
+<input type="text" value="7"/>
+
+<input type="text" class="ff" value="1"/>
+<input type="text" class="ff" value="3"/>
+<input type="text" class="ff" value="2"/>
+<input type="text" class="ff" value="4"/>
+<input type="text" class="ff" value="7"/>
+<input type="text" class="ff" value="6"/>
+<input type="text" class="ff" value="5"/>
+
+<script>
+var $allListElements = $('li');
+var elemList= $("body").find("input");
+elemList.each(function(i){
+  var v=  elemList[i].value;
+  console.log(v);
+})
+
+$("#txtId").blur(function(){
+    alert(11)
+})
+
+</script>
+
+</body>
+</html>

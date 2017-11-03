@@ -621,6 +621,15 @@
 
 		$dropdown
 			.on('mousedown', function (e) {
+				var ecX = e.offsetX;
+				var dWidth = $dropdown.width();
+
+				//滚动条宽度约为20px
+				if (ecX >= (dWidth - 20) && ecX <= dWidth) {
+					$input.isScroll = true;
+					return;
+				}
+				$input.isScroll = false;
 				e.preventDefault();
 				e.stopPropagation();
 			})
@@ -859,7 +868,7 @@
 		}
 
 		if (options.closeOnBlur) {
-			$input.on('focusout.xdsoft', function () {
+			$input.on('focusout.xdsoft', function (e) {
 				// var a = false;
 				// // $dropdown.scroll(function (event) {
 				// // 	//event.stopPropagation();
@@ -868,13 +877,17 @@
 				// $dropdown.on("triggerScroll",function(){
 				// 	a=true;
 				// })
-					
+
 				// $dropdown.trigger('triggerScroll');
 				// if (!a) {
 				// 	$input.trigger('close.xdsoft');
 				// }
-
-				$input.trigger('close.xdsoft');
+				if (!$input.isScroll) {
+					$input.trigger('close.xdsoft');
+				} else {
+					$input.isScroll = false;
+					$input.focus();
+				}
 			});
 		}
 
@@ -989,14 +1002,6 @@
 				}
 			}, 100);
 		}
-
-		$(window).on('resize', function () {
-			$box.css({
-				'width': 'auto'
-			});
-			$input
-				.trigger('updateHelperPosition.xdsoft');
-		})
 
 		$input
 			.on('close.xdsoft', function () {

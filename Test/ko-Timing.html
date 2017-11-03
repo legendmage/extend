@@ -14,8 +14,10 @@
 </head>
 
 <body>
-    <input type="text" name="text" id="aa" data-bind="fristBinding:num,secondBinding:num2">
-    <input type="text" name="text" id="aa" data-bind="secondBinding:num,fristBinding:num2">
+    <input type="text" name="text" id="aa" data-bind="value:num,fristBinding:num,secondBinding:num">
+    <!-- <input type="text" name="text" id="aa" data-bind="value:num,secondBinding:num,fristBinding:num"> -->
+
+    <button data-bind="click:changeValue">改变值</button>
     <script>
         ko.bindingHandlers.fristBinding = {
             init: function (element, valueAccessor, allBindingAccessor, viewModel) {
@@ -41,6 +43,11 @@
         let model = {};
         model.num = ko.observable("123");
         model.num2 = ko.observable("222");
+        model.changeValue=function(){
+            model.num("qq");
+        }
+
+
 
         ko.applyBindings(model);
 

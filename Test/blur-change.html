@@ -1,0 +1,65 @@
+<!-- 同时使用两个自定义绑定，执行顺序问题 
+    测试结果：按dom data-bind 顺序，绑定在前执行 ex: data-bind:"bind1:aa,bind2:bb" 先执行bind1.再执行bind2
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../libs/knockout/knockout-3.4.0.js"></script>
+    <script src="../libs/knockout/knockout.validation.js"></script>
+</head>
+
+<body>
+    <input type="text" name="text" id="aa" data-bind="value:num,event:{blur:triggerBlur}">
+    <input type="text" name="text" id="aa" accesskey="1">
+
+    <button type="button" data-bind="click:sub">提交</button>
+    <script>
+
+        ko.extenders["testExtend"] = function (target, params) {
+            ko.validation.rules["testExt"] = {
+                validator: function (value, validate) {
+                    debugger
+                    return false;
+
+                }
+            }
+            var rule={
+                rule:"testExt",
+                params:true,
+                message:"errorMessage"
+                
+            }
+
+            ko.validation.addAnonymousRule(target,rule);
+
+        }
+
+        let model = {};
+        model.num = ko.observable("123").extend({ testExtend: true });
+        model.num2 = ko.observable("222");
+        model.num3 = ko.observable(false);
+        model.triggerBlur = function () {
+            console.log(model.num())
+        }
+        model.sub = function () {
+            ko.validation.rules["testExt"].validator();
+            var errors=ko.validation.group(model);
+            if(errors().length>0){
+                alert("Error")
+            }else{
+                alert("Yes")
+            }
+        }
+
+        ko.applyBindings(model);
+
+    </script>
+</body>
+
+</html>
