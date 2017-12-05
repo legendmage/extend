@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../libs/jquery/jquery-2.2.3.js"></script>
+    <!-- <link rel="stylesheet" href="../libs/autocomplete/autocomplete-xdsoft/jquery.autocomplete.css">
+    <script src="../libs/jquery/jquery-2.2.3.js"></script>
+    <script src="../libs/autocomplete/autocomplete-xdsoft/jquery.autocomplete.js"></script> -->
+</head>
+
+<body>
+    <!-- 测试事件冲突 -->
+
+    <!-- <div>
+        1：
+        <input type="text" id="testBlur" tabindex="2" />
+    </div>
+    <div id="parent-autocomplete">
+        <input type="text" class="form-control" id="testFocusin" placeholder="enter state" tabindex="1">
+    </div> -->
+    <script>
+        $(function () {
+            //测试focusin 和blur 执行顺序
+            // $("#testBlur").blur(function () {
+            //     console.log("执行 blur");
+            // })
+
+            // $("#testFocusin").focusin(function () {
+            //     console.log("执行 focusin");
+            // })
+
+            // var states = [
+            //     'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
+            //     'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
+            //     'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+            //     'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+            //     'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+            //     'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+            //     'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+            //     'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+            //     'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+            // ];
+
+            // $('#testFocusin').autocomplete({
+            //     //visibleLimit: 5,
+            //     source: [states]
+            // });
+
+            // $('#testFocusin').click(function () {
+            //     console.log("执行 click");
+            //     //$('#testFocusin').trigger("focusin.xdsoft");
+            //     $('#testFocusin').trigger('open.xdsoft');
+            // })
+
+
+
+            // var start = new Date();
+            // setTimeout(function(){
+            //  console.log(new Date() - start);
+            // },500);
+            // while(new Date() - start <= 1000 ){}
+
+
+            // setTimeout(function () {
+            //     console.log("测试1");
+            // }, 0);
+            // console.log("测试2");
+
+            //查看setTimeout的对象
+            // var obj = {
+            //     name: "张三",
+            //     show: function () {
+            //         console.log(this);
+            //     },
+            //     show1: function () {
+            //         setTimeout(function () {
+            //             console.log(this);
+            //         }, 10);
+            //     }
+            // }
+            // obj.show();  //当前obj对象
+            // obj.show1();  //window 对象
+
+
+            // setTimeout(function (a, b, c) {
+            //     console.log(a); // 1
+            //     console.log(b); // 2
+            //     console.log(c); // undefined
+            //     console.log(a + b); // 3
+            // }, 100, 1, 2);
+
+            //不清理setTimeout
+            var func = function (i) {
+                console.log("aaa");
+                console.log(i);
+            }
+            for (var i = 0; i < 10000; i++) {
+                 setTimeout(func, 100, i);
+            }
+
+
+            var func = function (i) {
+                console.log("aaa");
+                console.log(i);
+            }
+            for (var i = 0; i < 10000; i++) {
+                var st;
+                if (st) {
+                    clearTimeout(st);
+                }
+                st = setTimeout(func, 100, i);
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>

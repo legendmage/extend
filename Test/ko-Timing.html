@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <input type="text" name="text" id="aa" data-bind="value:num,fristBinding:num,secondBinding:num">
+    <input type="text" name="text" id="aa" data-bind="value:num,uniqueName: true">
     <!-- <input type="text" name="text" id="aa" data-bind="value:num,secondBinding:num,fristBinding:num"> -->
 
     <button data-bind="click:changeValue">改变值</button>
@@ -32,19 +32,24 @@
         ko.bindingHandlers.secondBinding = {
             init: function (element, valueAccessor, allBindingAccessor, viewModel) {
                 var value = valueAccessor();
-                element.value=value();
+                element.value=value();    
                 console.log("second  Init=============" + value());
-            },
+            },                                                                                                                                                                                                                                                                                                                                                                                                            
             update: function (element, valueAccessor, allBindingAccessor, viewModel) {
                 console.log("second  Update");
             }
         }
 
         let model = {};
-        model.num = ko.observable("123");
+        model.num = ko.observable("&#919;");
         model.num2 = ko.observable("222");
-        model.changeValue=function(){
-            model.num("qq");
+
+        model.obj=ko.observable({f1:ko.observable("123"),f2:ko.observable("abc")});
+
+        model.changeValue=function(){                                        
+           var bool1=ko.isObservable(model.obj);
+           var bool1=ko.isObservable(model.obj());
+            //model.num("qq");
         }
 
 

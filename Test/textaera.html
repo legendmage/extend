@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="../libs/jquery/jquery-2.2.3.js"></script>
+</head>
+
+<body>
+
+    <!-- <div>
+        <label>111</label>
+        <div>
+            <textarea name="aaaa"></textarea>
+        </div>
+    </div> -->
+    <!-- <div>
+        <div id="dm-test">
+            <p>测试：
+                <font>qqqqq</font>
+            </p>
+            <p>测试：
+                <font>qqqqq</font>
+            </p>
+            <p>测试：
+                <font>qqqqq</font>
+            </p>
+            <p>测试：
+                <font>qqqqq</font>
+            </p>
+        </div>
+    </div> -->
+
+
+    <script>
+
+        function a(x) {
+            //console.log(arguments.callee.caller);
+            throw new Error("error");
+        }
+
+        function b() {
+            a();
+            console.log(arguments.callee.caller);
+        }
+
+        window.onerror = function (message, scriptUrl, line, col, errorObj) {
+            console.log("caller:" + arguments.callee.caller);
+            return true;
+        }
+
+        function c(){
+            window.onerror("errormessage");
+        }
+
+        $(function () {
+
+
+
+
+            // $("#dm-test").children("p").each(function (index) {
+            //     $(this).click(function () {
+            //         var font_val = $(this).find("font")[0].text();
+            //         console.log("点击");
+            //         //var p_val=$(this).text();
+
+            //         //查找textarea  children 返回数组
+            //         var textareas = $(this).parent().parent().prev().find("textarea");
+
+            //         var textarea_val = $(textareas[0]).val() || "";
+            //         $(textareas[0]).val(textarea_val + ',' + font_val);
+
+            //     })
+            // })
+
+        });
+    </script>
+
+    <button onclick="b()">被动调用window.onError</button>
+
+    <button onclick="c()">主动调用window.onError</button>
+
+</body>
+
+</html>

@@ -22,4 +22,5 @@ input[type=text].form-control{
 #first_example{
 	margin:50px auto;
 	max-width:350px;
+	word-break: break-all;
 }

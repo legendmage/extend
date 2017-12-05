@@ -5840,6 +5840,8 @@ $.widget( "ui.autocomplete", {
 				}
 			},
 			menuselect: function( event, ui ) {
+               
+
 				var item = ui.item.data( "ui-autocomplete-item" ),
 					previous = this.previous;
 
@@ -5866,7 +5868,10 @@ $.widget( "ui.autocomplete", {
 				this.term = this._value();
 
 				this.close( event );
-				this.selectedItem = item;
+                this.selectedItem = item;
+                
+                 //新增class
+                 $(this).addClass("active");
 			}
 		} );
 

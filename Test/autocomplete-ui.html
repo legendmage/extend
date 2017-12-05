@@ -1,0 +1,403 @@
+<!-- 点击展开备选列表   
+     默认选中  备选列表无法高亮   --不支持
+     自动补零   
+     加粗展示    --有额外方案支持
+     得到焦点后，得到焦点展示全部信息 
+     允许输入备选列表之外的值   --不支持
+     回车键选中 不支持    -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jquery ui autocomplete</title>
+
+    <link rel="stylesheet" href="../libs/jquery-ui/jquery-ui-1.11.4.custom/jquery-ui.css">
+    <script src="../libs/jquery/jquery-2.2.3.js"></script>
+    <script src="../libs/knockout/knockout-3.4.0.js"></script>
+    <script src="../libs/jquery-ui/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+    <style>
+        .ui-autocomplete {
+            max-height: 100px;
+            overflow-y: auto;
+            /* 防止水平滚动条 */
+            overflow-x: hidden;
+            /* user-select:all; */
+        }
+
+        .bgcolor {
+            background-color: #3f3f3f;
+        }
+    </style>
+</head>
+
+<body>
+        <div>
+            <input type="text" id="tInput" value="12244" style="user-select:none;"/>
+        </div>
+
+
+    <div id="main" style=height:2000px;>
+
+        <input type="text" id="input" value="123"/>
+
+    静态数据:
+    <input id="tags" data-bind="autocomplete:dataSource,
+                                autoVal:selectedValue,
+                                autoOpt:{
+                                    titleKey:'title',
+                                    chooseKey:'flowid',
+                                    mustChoose:true,
+                                    visibleLimit:20,
+                                    defaultValue:'',
+                                    selectEvent:function select(val){}
+                                }">
+
+    <span id="showValue"></span>
+
+    <button id="btnclick">获取值</button>
+    <input type="text" id="tags2" />
+
+</div>
+    <script>
+        $(function () {
+            $("#tInput").keypress(function(){
+                $("#tInput").val('aassdd');
+            })
+
+
+
+            $("#main").mousedown(function(){
+                //alert(1)
+            })
+
+            $("#input").blur(function(){
+                console.log("aaaaaa");
+            })
+
+
+            //工具类  
+            var autoUtils = {
+                //传入对象转换
+                fromData: function (autoSource, autoOpt) {
+                    var newSource = [];
+
+                    for (var i in autoSource) {
+                        var val = autoSource[i];
+                        var newVal = { source: val };
+                        //数据源中值处理  对象 
+                        if ((val instanceof Object) && !(val instanceof Array) && !(val instanceof Function)) {
+                            if (autoOpt.titleKey instanceof Function) {
+                                newVal.label = autoOpt.titleKey(val);
+                            } else {
+                                newVal.label = val[autoOpt.titleKey];
+                            }
+
+                            if (autoOpt.titleKey instanceof Function) {
+                                newVal.value = autoOpt.titleKey(val);
+                            } else {
+                                newVal.value = val[autoOpt.titleKey];
+                            }
+                            newSource.push(newVal);
+                        }
+                    }
+                    return newSource.length > 0 ? newSource : autoSource;
+                },
+                //传出对象转换
+                toData: function () {
+
+                },
+
+                //补0操作
+                zeroFill: function (orginValue, autoSource, autoOpt, defaultFillZero) {
+                    var leftZeroFill = 0;
+                    if (autoOpt.hasOwnProperty("leftPaddingString")) {
+                        if (typeof (autoOpt.leftPaddingString) === "number" || typeof (autoOpt.leftPaddingString) === "string") {
+                            leftZeroFill = parseInt(autoOpt.leftPaddingString);
+                        }
+                        if (leftZeroFill > 0) {
+                            var zero = "";
+                            for (var i = 0; i < leftZeroFill; i++) {
+                                zero += "0";
+                            }
+                            var tmpValue = zero + orginValue;
+                            //数组filter可能会备份数据，占用内存 使用for遍历
+                            for (var i = 0; i < autoSource.length; i++) {
+                                var sourceObj = autoSource[i].source;
+                                var sourceVal = autoOpt.chooseKey instanceof Function ? autoOpt.chooseKey(sourceObj) : sourceObj[autoOpt.chooseKey];
+                                //命中
+                                if (tmpValue === sourceVal) {
+                                    orginValue = sourceVal;
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        leftZeroFill = defaultFillZero || 2;
+                        var zero = "";
+                        for (var i = 0; i < leftZeroFill; i++) {
+                            zero += "0";
+                            var tmpValue = zero + orginValue;
+                            //数组filter可能会备份数据，占用内存 使用for遍历
+                            for (var i = 0; i < autoSource.length; i++) {
+                                var sourceObj = autoSource[i].source;
+                                var sourceVal = autoOpt.chooseKey instanceof Function ? autoOpt.chooseKey(sourceObj) : sourceObj[autoOpt.chooseKey];
+                                //命中
+                                if (tmpValue === sourceVal) {
+                                    orginValue = sourceVal;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    return orginValue;
+                },
+
+                //验证值是否在数据源
+                hasValueByObject: function (value, autoSource) {
+                    var result = false;
+                    for (var i = 0; i < autoSource.length; i++) {
+                        if (value === autoSource[i].label) {
+                            result = true;
+                            break;
+                        }
+                    }
+                    return result;
+                }
+            }
+
+
+            //自定义绑定  autocomplete
+            ko.bindingHandlers.autocomplete = {
+                init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+                    //绑定处理
+                    // var autoSource = allBindingsAccessor.get("autocomplete") || [];
+                    // var autoVal = allBindingsAccessor.get("autoVal") || ko.observable("");
+                    // var autoOpt = allBindingsAccessor.get("autoOpt") || {};
+
+                    //注册得到焦点事件
+                    var $input = $(element);
+
+
+                },
+                update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+                    //绑定处理
+                    var autoSource = allBindingsAccessor.get("autocomplete") || [];
+                    var autoVal = allBindingsAccessor.get("autoVal") || ko.observable("");
+                    var autoOpt = allBindingsAccessor.get("autoOpt") || {};
+
+                    //autoSource 数据源为ko对象是需转成js对象
+                    autoSource = ko.toJS(autoSource);
+
+                    //静态数据源 jqery-ui autocomplete数据格式为  {label:"",value:"",....} 调用 fromData方法
+                    if (autoSource instanceof Array) {
+                        autoSource = autoUtils.fromData(autoSource, autoOpt);
+                    }
+
+                    //补零后的值
+                    var orginValue = autoUtils.zeroFill(autoVal(), autoSource, autoOpt);
+
+                    var $input = $(element);
+
+                    //初始化autocomplete
+                    $input.autocomplete({
+                        minLength: 0,
+                        autoFocus: true,
+                        source: autoSource,
+                        select: function (event, ui) {
+                            //组装值
+                            //真实值
+                            //$("#showValue").text(ul.item.realValue);
+
+                        },
+                        change:function(event,ui){
+                        },                        
+                        focus: function (event, ui) {
+                            
+                        },
+                        search: function (event, ui) {
+                            
+                        }
+                    });
+                    //$input.autocomplete("search", "");
+
+                    $input.autocomplete({
+                        open: function (event, ui) { }
+                    });
+
+                    //注册焦点事件
+                    // $input.on("focus", function (e) {
+                    //     $input.autocomplete("search", "");
+                    //     //var val = orginValue;
+                    //     // var inputVal = $input.val();
+                    //     // if (inputVal === orginValue) {
+                    //     //     $input.autocomplete("search", "");
+                    //     // } else {
+                    //     //     $input.autocomplete("search", inputVal);
+                    //     // }
+                    //     e.preventDefault();
+                    //     return true;
+                    // })
+
+                    // //注册焦点事件
+                    // $input.off("blur").on("blur", function () {
+                    //     var inputVal = $input.val();
+                    //     var mustChoose = autoOpt.mustChoose || true;
+                    //     if (mustChoose) {
+                    //         if (!autoUtils.hasValueByObject(inputVal, autoSource)) {
+                    //             $input.val("");
+
+                    //             //改变真正ko的值
+                    //             autoVal("");
+                    //         }
+                    //     }
+                    // })
+
+                    // //注册 删除按键事件 
+                    // $input.off("keydown").on("keydown", function (e) {
+                    //     e = window.event || e;
+                    //     var keycode = e.keycode || e.which;
+                    //     if (keycode == $.ui.keyCode.BACKSPACE) {
+                    //         //$input.val("");
+                    //     }
+                    //     return true;
+                    // })
+                }
+            }
+
+            var data = [
+                { title: "01：11111111", flowid: "01" },
+                { title: "02：22222221", flowid: "02" },
+                { title: "03：33333331", flowid: "03" },
+                { title: "04：44444441", flowid: "04" },
+                { title: "05：55555551", flowid: "05" },
+                { title: "06：66666661", flowid: "06" },
+                { title: "07：77777771", flowid: "07" },
+                { title: "08：88888881", flowid: "08" },
+            ]
+
+            var model = {};
+            model.dataSource = ko.observableArray(data);
+            model.selectedValue = ko.observable("05");
+            ko.applyBindings(model);
+
+
+            var availableTags = [
+                "ActionScript",
+                "AppleScript",
+                "Asp",
+                "BASIC",
+                "C",
+                "C++",
+                "Clojure",
+                "COBOL",
+                "ColdFusion",
+                "Erlang",
+                "Fortran",
+                "Groovy",
+                "Haskell",
+                "Java",
+                "JavaScript",
+                "Lisp",
+                "Perl",
+                "PHP",
+                "Python",
+                "Ruby",
+                "Scala",
+                "Scheme"
+            ];
+
+            $("#tags2").autocomplete({
+                minLength: 0,
+                delay: 500,
+                autoFocus: true,
+                source: availableTags,
+                select: function (event, ul) {
+
+                }
+            });
+
+            $("#tags2").autocomplete("search", "");
+
+        })
+
+
+
+
+
+
+        // $(function () {
+
+        //     var data = [
+        //         { label: "<strong>01：1111111</strong>", value: "01" },
+        //         { label: "02：22222221", value: "02" },
+        //         { label: "03：33333331", value: "03" },
+        //         { label: "04：44444441", value: "04" },
+        //         { label: "05：55555551", value: "05：55555551", realValue: "05" },
+        //         { label: "06：66666661", value: "06", realValue: "05" },
+        //         { label: "07：77777771", value: "07", realValue: "05" },
+        //         { label: "08：88888881", value: "08", realValue: "05" },
+        //     ]
+
+        //     var dt = {
+        //         autocomplete: data,
+        //         autoVal: "",
+        //         autoOpt: {
+        //             titleKey: "",
+        //             chooseKey: "",
+        //             mustChoose: true,
+        //             visibleLimit: "",
+        //             defaultValue: "",
+        //             selectedEvent: function select(val) {
+
+        //             }
+        //         }
+        //     }
+
+        //     //jquery Ui 数据必须使用 label，value   传入时需进行转换，以及转出时进行替换
+
+
+
+
+        //     $("#tags").autocomplete({
+        //         minLength: 0,
+        //         delay: 500,
+        //         autoFocus: true,
+        //         option: {
+        //             "disabled": false
+        //         },
+        //         source: dt.autocomplete,
+        //         focus: function (event, ui) {
+        //             //选中当前数据
+
+        //             return false;
+        //         },
+        //         select: function (event, ul) {
+        //             //组装值
+        //             //真实值
+        //             $("#showValue").text(ul.item.realValue);
+
+        //         }
+
+        //     });
+
+        //     //点击展示全部,及默认值展示
+        //     $("#tags").focus(function () {
+        //         var val = $(this).val();
+        //         // $("#tags").autocomplete("search", "");
+        //     })
+
+
+
+        //     // $("#btnclick").click(function () {
+        //     //     alert($("#tags").val() + "========" + $("#tags").val());
+        //     // })
+
+        // });
+    </script>
+</body>
+
+</html>

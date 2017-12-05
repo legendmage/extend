@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <script src="../libs/jquery/jquery-2.2.3.js"></script>
+    
+</head>
+
+<body>
+
+    <form>
+        <input type="button" value="Start count!" onClick="timedCount()">
+        <input type="text" id="txt">
+        <input type="button" value="Stop count!" onClick="stopCount()">
+    </form>
+    <script type="text/javascript">
+        // var c = 0
+        // var t
+        // function timedCount() {
+        //     document.getElementById('txt').value = c
+        //     c = c + 1
+        //     t = setTimeout("timedCount()", 1000)
+        // }
+        // function stopCount() {
+        //     clearTimeout(t);
+
+        // }
+        var t;
+        $("#txt").focus(function () {
+            
+             t = setTimeout(function () {
+                console.log("aaaaaaaaaaaaaaaaaaaa");
+                // clearTimeout(t);
+                // t = null;
+            }, 100);
+            console.log("outline:" + t);
+        })
+        
+        function stopCount() {
+
+            clearTimeout(t);
+
+        }
+        // var t = setTimeout(function () {
+        //     console.log("aaaaaaaaaaaaaaaaaaaa");
+        //     clearTimeout(t); 
+        //     t = null;
+        // }, 0);
+        // console.log("outline:"+t);
+    </script>
+</body>
+
+</html>
