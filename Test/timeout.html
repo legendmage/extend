@@ -2,7 +2,7 @@
 
 <head>
     <script src="../libs/jquery/jquery-2.2.3.js"></script>
-    
+
 </head>
 
 <body>
@@ -26,15 +26,15 @@
         // }
         var t;
         $("#txt").focus(function () {
-            
-             t = setTimeout(function () {
+
+            t = setTimeout(function () {
                 console.log("aaaaaaaaaaaaaaaaaaaa");
                 // clearTimeout(t);
                 // t = null;
             }, 100);
             console.log("outline:" + t);
         })
-        
+
         function stopCount() {
 
             clearTimeout(t);
@@ -46,7 +46,20 @@
         //     t = null;
         // }, 0);
         // console.log("outline:"+t);
+
+
+        var func = function (i) {
+            console.log(i);
+        }
+        for (var i = 0; i < 10000; i++) {
+            var st;
+                                                 if (st) {
+                clearTimeout(st);
+            }
+            st = setTimeout(func, 5000, i);
+        }
+
     </script>
 </body>
 
-</html>
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../libs/knockout/knockout-3.4.0.js"></script>
+</head>
+
+<body>
+    <div>
+        <div>
+            <span>fristName:</span>
+            <input type="text" data-bind="value:fristName" />
+        </div>
+        <div>
+            <span>lastName:</span>
+            <input type="text" data-bind="value:lastName" />
+        </div>
+        <div>
+            <span> fullName:</span>
+            <input type="text" data-bind="value:fullName" />
+        </div>
+
+        <div>
+            <button data-bind="click:click_message">依赖数量</button>
+            <br/>
+            <span data-bind="text:message"></span>
+        </div>
+    </div>
+    <script>
+
+        //计算 computed
+        var viewModel = {
+            fristName: ko.observable("Hello"),
+            lastName: ko.observable("world"),
+            message: ko.observable(),
+            nickName: ""
+        }
+        viewModel.fullName = ko.computed({
+            read: function () {
+                return this.fristName() + " " + this.lastName();
+            },
+            write: function (value) {
+                //根据fullName 填充fristName和lastName
+                var arr = value.split(' ');
+                this.fristName(arr[0]);
+                this.lastName(arr[1]);
+                //this.fullName(value); //不允许在write中当前计算栏位赋值，无限循环
+            },
+            owner: viewModel,  //类似apply,call,bind改变this指向
+            deferEvaluation: true
+        });
+
+
+        //click 
+        viewModel.click_message = function () {
+            var message = "";
+            var referNum = viewModel.fullName.getDependenciesCount();
+            message += "依赖数量：" + referNum + "；";  // 2个依赖项 分别为  fristName，lastName。若fristName/lastName中为非ko的字段。则依赖项会减少
+
+            var subscriptNum = viewModel.fullName.getSubscriptionsCount();
+            message += "订阅数量：" + subscriptNum + "；"; //1个订阅 computed
+
+            var isReferMod = viewModel.fullName.isActive();
+            message += "依赖属性是否会被更新：" + isReferMod + "；";  // 若依赖字段均为非ko字段，则为false
+
+            var peekValue = viewModel.fullName.peek();
+            message += "依赖属性的值：" + peekValue + "；";  // 若依赖字段均为非ko字段，则为false
+
+            viewModel.fullName.subscribe(function (value) {
+                alert(value);
+            });  //修改fullName的值，再点击按钮，订阅数量会变成2
+
+            viewModel.message(message);
+        }
+        ko.applyBindings(viewModel);
+    </script>
+
+</body>
+
+</html>
