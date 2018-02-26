@@ -1,94 +1,12 @@
-<!-- <script type="text/javaScript" src="jquery.js"></script> -->
-<script type="text/javaScript" src="autocomplete.js"></script>
-<!DOCTYPE>
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <style>
-        .autocomplete-main .autocomplete-dropdown {
-            border: 1px solid #f00;
-            width: 100%;
-            position: absolute;
-            left: 0px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .autocomplete-main .autocomplete-dropdown>div {
-            width: auto;
-            padding-left: 5px;
-        }
-        .autocomplete-main .autocomplete-dropdown>div.active {
-            background-color: #e09000;
-        }
-        .autocomplete-close {
-            display: none;
-        }
-
-        .autocomplete-open {
-            display: block;
-        }
-    </style>
-
-    <script type="text/javaScript">
-        window.onload=function(){ var ev=document.getElementById('demo'); 
-        var ev1=document.getElementById('demo1'); 
-        window.autocomplete(ev,{class:'ceshi',
-        data:[1,2,3,4,5], autoTitle:'', autoVal:'' }); 
-        window.autocomplete(ev1,{ 
-            class:'', 
-            data:[ 
-                {text:'a',value:1}, 
-                {text:'b',value:2},
-                {text:'c',value:3}, 
-                {text:'d',value:4}, 
-                {text:'e',value:5}, 
-                {text:'f',value:6}, 
-                {text:'a',value:1}, 
-                {text:'b',value:2},
-                {text:'c',value:3}, 
-                {text:'d',value:4}, 
-                {text:'e',value:5},
-                {text:'c',value:3}, 
-                {text:'d',value:4}, 
-                {text:'e',value:5}, 
-                {text:'f',value:6}, 
-                {text:'a',value:1}, 
-                {text:'b',value:2},
-                {text:'c',value:3},
-                {text:'d',value:4},
-                {text:'e',value:5}, {text:'f',value:6}, {text:'a',value:1}, {text:'b',value:2},
-        {text:'c',value:3}, {text:'d',value:4}, {text:'e',value:5}, {text:'f',value:6}, ], 
-        autoTitle:'text',
-         autoVal:'value',
-         visibelLimt:5
-        },function(data){  });
-        
-        }
-    </script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
 </head>
-
 <body>
-    <input type="text" id="demo" value="--" class="autocomplete-input" style="position:relative;" />
-
-    <input type="text" id="demo1" value="--" class="autocomplete-input" style="position:relative;" />
-
-    <!-- <div class="autocomplete-main" style="width:auto;display:inline-block">
-        <input type="text" id="demo" value="aaaa" class="autocomplete-input" style="position:relative;" />
-        <div class="autocomplete-source autocomplete-dropdown autocomplete-close">
-            <div class="autocomplete-item">1231</div>
-            <div class="autocomplete-item">1233</div>
-            <div class="autocomplete-item">1234</div>
-            <div class="autocomplete-item">1235</div>
-            <div class="autocomplete-item">1236</div>
-            <div class="autocomplete-item">1237</div>
-            <div class="autocomplete-item">1238</div>
-            <div class="autocomplete-item">1239</div>
-        </div>
-    </div> -->
-
+    <div></div>
 </body>
-
 </html>

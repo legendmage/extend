@@ -73,6 +73,7 @@
     ko.applyBindings(viewModel);
 </pre>
 ![](https://i.imgur.com/6mMqxDd.gif)
+
 * **计算栏位 依赖属性**
 	* dispose()–释放依赖属性，清除所有的依赖订阅。此方法非常有用，当你想停止一个依赖属性以避免其更新或者清除一个内存中的依赖属性而那些存在依赖关系的监控值是不会被清除的。
 	* extend(extenders)–用于扩展依赖属性。
@@ -106,7 +107,8 @@
 </pre>  
 
 ### 自定义扩展 extend 
-
+* **extenders**主要功能是在值发生变化时，对observable添加附加功能。如截断，只允许数字等操作
+* logchange，required这些都可以[官网](http://knockoutjs.com/documentation/extenders.html)上查到，自定义新的扩展**readonly**，在observable状态下，实现无法修改值
 
 ### 自定义绑定 bindingHandlers
 

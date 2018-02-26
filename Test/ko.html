@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <!-- computed -->
     <div>
         <div>
             <span>fristName:</span>
@@ -30,14 +31,45 @@
             <span data-bind="text:message"></span>
         </div>
     </div>
+
+    <!-- extend -->
+    <div>
+        <input type="text" data-bind="value:nickName" />
+        <button data-bind="click:addReadonly">添加readonly扩展</button>
+        <button data-bind="click:removeReadonly">移除readonly扩展</button>
+        <button data-bind="click:getValue">获取值</button>
+    </div>
+
     <script>
+
+        //自定义extender
+        ko.extenders.readonly1 = function (target, isReadonly) {
+            var computed = ko.computed({
+                read: target,
+                write: function () {
+                    debugger
+                    if (computed.isReadonly()) {
+                        return;
+                    }
+                    target();
+                }
+            });
+            computed.isReadonly = ko.observable(readonly);
+            return computed;
+
+            // target.subscribe(function (newValue) {
+            //     if (isReadonly) {
+            //         return;
+            //     }
+            // });
+        }
 
         //计算 computed
         var viewModel = {
             fristName: ko.observable("Hello"),
             lastName: ko.observable("world"),
             message: ko.observable(),
-            nickName: ""
+            nickName: ko.observable("aaa"),
         }
         viewModel.fullName = ko.computed({
             read: function () {
@@ -75,6 +107,16 @@
             });  //修改fullName的值，再点击按钮，订阅数量会变成2
 
             viewModel.message(message);
+        }
+        //添加extend
+        viewModel.addReadonly = function () {
+            viewModel.nickName.extend({ readonly1: true });
+        }
+        viewModel.removeReadonly = function () {
+            viewModel.nickName.extend({ readonly1: false });
+        }
+        viewModel.getValue = function () {
+            alert(viewModel.nickName());
         }
         ko.applyBindings(viewModel);
     </script>

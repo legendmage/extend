@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../libs/jquery/jquery-2.2.3.js"></script>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="txtcontent">
+        <button type="button" id="btncopy">copy</button>
+    </div>
+</body>
+
+</html>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btncopy").click(function (e) {
+            //$("#txtcontent").select();
+            //document.execCommand("Copy"); // 执行浏览器复制命令
+            autocopy("txtcontent");
+        })
+    })
+
+    function autocopy(documentId) {
+        var target=document.getElementById(documentId);
+        $(target).focus();
+        $(target).select();
+        try{
+            if(document.execCommand("copy",false,null)){
+                alert("copy success!!!")
+            }else{
+                alert("copy fail")
+            }
+        }catch(err){
+            alert("copy exception")
+        }
+    }
+
+
+</script>
